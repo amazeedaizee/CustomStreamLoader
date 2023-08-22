@@ -1,6 +1,7 @@
 # Custom Stream Loader for Needy Streamer Overload
 
-![image](https://github.com/amazeedaizee/CustomStreamLoader/assets/131136866/acf52f9d-4abe-4197-a5a2-0efb3caef98c)
+![2023-08-21](https://github.com/amazeedaizee/CustomStreamLoader/assets/131136866/6b828ae9-0091-4f26-9125-df5e89ad03ef)
+
 
 A mod that can play your Custom Streams made through the [Custom Stream Maker](https://github.com/amazeedaizee/CustomStreamMaker) program. Press the Home button on the Login/Caution screen to start playing!
 
