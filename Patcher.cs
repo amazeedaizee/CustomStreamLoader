@@ -189,6 +189,18 @@ namespace CustomStreamLoader
         }
 
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(TenchanView), "Awake")]
+        static void ChangeChairVisibility(TenchanView __instance)
+        {
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return;
+            var isValidBG = StreamLoader.customStreamSettings.StartingBackground == (StreamBackground.Default | StreamBackground.Silver | StreamBackground.Gold | StreamBackground.MileOne | StreamBackground.MileTwo | StreamBackground.MileThree | StreamBackground.MileFour | StreamBackground.MileFive);
+            if (isValidBG && !StreamLoader.customStreamSettings.HasChair)
+                __instance._noChair.SetActive(true);
+            else __instance._noChair.SetActive(false);
+        }
+
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(Live), "Awake")]
         static void SetCustomWatching(Live __instance, ref int ___watcher)
         {

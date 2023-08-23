@@ -65,6 +65,8 @@ namespace CustomStreamLoader
         public bool HasCustomEndScreen;
         public string CustomEndScreenPath;
 
+        public bool HasChair;
+
         public bool IsInvertedColors;
         public bool isBordersOff;
 
