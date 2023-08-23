@@ -194,7 +194,7 @@ namespace CustomStreamLoader
         {
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return;
-            var isValidBG = StreamLoader.customStreamSettings.StartingBackground == (StreamBackground.Default | StreamBackground.Silver | StreamBackground.Gold | StreamBackground.MileOne | StreamBackground.MileTwo | StreamBackground.MileThree | StreamBackground.MileFour | StreamBackground.MileFive);
+            var isValidBG = (int)StreamLoader.customStreamSettings.StartingBackground < 8;
             if (isValidBG && !StreamLoader.customStreamSettings.HasChair)
                 __instance._noChair.SetActive(true);
             else __instance._noChair.SetActive(false);
