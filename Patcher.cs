@@ -159,7 +159,7 @@ namespace CustomStreamLoader
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(Boot), nameof(Boot.Awake))]
+        [HarmonyPatch(typeof(Boot), nameof(Boot.waitAccept))]
         internal static void CloseCustomStream()
         {
             StreamLoader.hasStreamPlayed = false;
