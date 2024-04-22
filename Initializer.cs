@@ -12,7 +12,7 @@ namespace CustomStreamLoader
     {
         public const string pluginGuid = "needy.girl.customstream";
         public const string pluginName = "Custom Stream Loader";
-        public const string pluginVersion = "1.0.0.0";
+        public const string pluginVersion = "1.0.0.1";
 
         public static PluginInfo PInfo { get; private set; }
 
@@ -23,19 +23,21 @@ namespace CustomStreamLoader
             Harmony harmony = new Harmony(pluginGuid);
             var originalSetScenario = AccessTools.FirstMethod(typeof(Live), m => m.Name == "SetScenario");
             var patchSetScenario = AccessTools.Method(typeof(EventPatcher), nameof(EventPatcher.AwaitCustomStream));
-            harmony.Patch(originalSetScenario,new HarmonyMethod(patchSetScenario));
+            harmony.Patch(originalSetScenario, new HarmonyMethod(patchSetScenario));
             harmony.PatchAll();
         }
-
         public void Update()
         {
-            if (Input.GetKeyUp(KeyCode.Home) && SceneManager.GetActiveScene().name == "BiosToLoad") 
+            Logger.LogInfo("I'm updating!");
+            if (Input.GetKeyDown(KeyCode.Home) && SceneManager.GetActiveScene().name == "BiosToLoad")
             {
+                Logger.LogInfo("I'm home!");
                 SingletonMonoBehaviour<Settings>.Instance.saveNumber = 5;
                 StreamLoader.GetCustomStream();
                 SceneManager.LoadScene("WindowUITestScene");
             }
         }
+
 
         public void OnApplicationQuit()
         {
