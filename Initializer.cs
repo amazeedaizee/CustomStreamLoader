@@ -23,15 +23,16 @@ namespace CustomStreamLoader
             Harmony harmony = new Harmony(pluginGuid);
             var originalSetScenario = AccessTools.FirstMethod(typeof(Live), m => m.Name == "SetScenario");
             var patchSetScenario = AccessTools.Method(typeof(EventPatcher), nameof(EventPatcher.AwaitCustomStream));
+            enabled = true;
             harmony.Patch(originalSetScenario, new HarmonyMethod(patchSetScenario));
             harmony.PatchAll();
+            this.gameObject.hideFlags = HideFlags.HideAndDontSave;
         }
         public void Update()
         {
-            Logger.LogInfo("I'm updating!");
             if (Input.GetKeyDown(KeyCode.Home) && SceneManager.GetActiveScene().name == "BiosToLoad")
             {
-                Logger.LogInfo("I'm home!");
+                Logger.LogInfo("Loading stream...");
                 SingletonMonoBehaviour<Settings>.Instance.saveNumber = 5;
                 StreamLoader.GetCustomStream();
                 SceneManager.LoadScene("WindowUITestScene");
