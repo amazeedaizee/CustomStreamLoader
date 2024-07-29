@@ -3,7 +3,7 @@
 ![2023-08-21](https://github.com/amazeedaizee/CustomStreamLoader/assets/131136866/6b828ae9-0091-4f26-9125-df5e89ad03ef)
 
 
-A mod that can play your Custom Streams made through the [Custom Stream Maker](https://github.com/amazeedaizee/CustomStreamMaker) program. Press the Home button or the stream generator button with the Ctrl key on the Login/Caution screen to start playing!
+A mod that can play your Custom Streams made through the [Custom Stream Maker](https://github.com/amazeedaizee/CustomStreamMaker) program. Press the Home Key or the stream generator button with the Ctrl Key on the Login/Caution screen to start playing!
 
 ### Note: You must have BepInEx pre-configured and enabled with the game to use this mod.
 [You can read how to configure BepInEx with the game here.](https://gist.github.com/amazeedaizee/ae0dd70cc0d842d6a83cd80451e3752e)
