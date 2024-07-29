@@ -196,8 +196,9 @@ namespace CustomStreamLoader
                         SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.ManualHaishin);
                     }
                 });
+                return false;
             }
-            return false;
+            return true;
 
         }
 
