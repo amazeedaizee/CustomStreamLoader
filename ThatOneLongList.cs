@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CustomStreamLoader
 {
@@ -218,6 +214,15 @@ namespace CustomStreamLoader
                    "stream_cho_fan5",
                    "stream_cho_fan6",
                 "stream_cho_fanservice",
+
+                                "stream_cho_g_express1",
+                "stream_cho_g_express1_2",
+                "stream_cho_g_express2",
+                "stream_cho_g_express2_3",
+                "stream_cho_g_express3",
+                "stream_cho_g_express3_4",
+                "stream_cho_g_express4",
+
                 "stream_cho_game",
                    "stream_cho_game_ape1",
                    "stream_cho_game_ape2",
@@ -241,6 +246,11 @@ namespace CustomStreamLoader
                    "stream_cho_game_twilight8",
                 "stream_cho_game_win_stop",
                 "stream_cho_gaoo",
+
+                                "stream_cho_grandend1",
+                "stream_cho_grandend2",
+                "stream_cho_grandend3",
+
                 "stream_cho_grgr",
                 "stream_cho_grgr2",
                 "stream_cho_grgr3",
@@ -262,6 +272,9 @@ namespace CustomStreamLoader
                 "stream_cho_horror_eeto",
                 "stream_cho_horror_glare",
                 "stream_cho_horror_idle",
+
+                "stream_cho_horror_iei",
+
                 "stream_cho_horror_kashikoma",
                 "stream_cho_horror_laugh",
                 "stream_cho_horror_lower",

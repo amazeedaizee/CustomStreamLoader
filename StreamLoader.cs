@@ -100,7 +100,7 @@ namespace CustomStreamLoader
         {
             var kList = new List<Playing>();
             InitializeCustomAnim(kAngelSays.customAnim);
-            if (kAngelSays.PlayingType == PlayingType.KAngelCallout)
+            if (kAngelSays.PlayingType == PlayingType.KAngelCallout && !customStreamSettings.hasDarkInterface)
             {
                 var kCallout = kAngelSays as KAngelCallout;
                 var hatCom = new Playing(true, "", StatusType.Tension, 1, 0, "", "", "", true, SuperchatType.White, true, kCallout.HaterComment);

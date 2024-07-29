@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using ngov3;
 using UnityEngine;
@@ -32,17 +33,20 @@ namespace CustomStreamLoader
         {
             if (Input.GetKeyDown(KeyCode.Home) && SceneManager.GetActiveScene().name == "BiosToLoad")
             {
-                Logger.LogInfo("Loading stream...");
-                SingletonMonoBehaviour<Settings>.Instance.saveNumber = 5;
-                StreamLoader.GetCustomStream();
-                SceneManager.LoadScene("WindowUITestScene");
+                LoadStreamScene();
             }
         }
-
 
         public void OnApplicationQuit()
         {
             MediaExporter.DeleteAddressBundlesFromPath();
+        }
+
+        internal static void LoadStreamScene()
+        {
+            SingletonMonoBehaviour<Settings>.Instance.saveNumber = 5;
+            StreamLoader.GetCustomStream().Forget();
+            SceneManager.LoadScene("WindowUITestScene");
         }
     }
 }
