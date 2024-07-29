@@ -1,12 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using ngov3;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.Rendering;
 using UnityEngine;
+using UnityEngine.CrashReportHandler;
+using UnityEngine.Rendering;
 
 namespace CustomStreamLoader
 {
@@ -39,15 +35,18 @@ namespace CustomStreamLoader
                 GameObject.Find("InvertVolume").GetComponent<Volume>().enabled = true;
             if (StreamLoader.customStreamSettings.isBordersOff)
                 SingletonMonoBehaviour<EventManager>.Instance.ObiActive(false);
-            await base.StartScenario(); 
+            await base.StartScenario();
             StreamLoader.hasStreamPlayed = true;
             _Live.HaishinClean();
+            if (StreamLoader.customStreamSettings.hasDarkInterface)
+                SingletonMonoBehaviour<WindowManager>.Instance.CloseApp(AppType.LiveDark);
             SingletonMonoBehaviour<WindowManager>.Instance.CloseApp(AppType.TaskManager);
             GameObject.Find("InvertVolume").GetComponent<Volume>().enabled = false;
             SingletonMonoBehaviour<EventManager>.Instance.ObiActive(true);
+            CrashReportHandler.enableCaptureExceptions = true;
             var window = SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.RebootDialog);
             window.Uncloseable();
-            
+
         }
     }
 }

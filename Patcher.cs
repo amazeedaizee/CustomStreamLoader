@@ -8,7 +8,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using TMPro;
+using UniRx;
 using UnityEngine;
+using UnityEngine.CrashReportHandler;
+using UnityEngine.UI;
 
 namespace CustomStreamLoader
 {
@@ -113,6 +116,7 @@ namespace CustomStreamLoader
         {
             ReversePatches.startEvent_Stub(__instance, cancellationToken);
             loginInstance = __instance;
+            CrashReportHandler.enableCaptureExceptions = false;
             if (StreamLoader.customStreamSettings.HasCustomDay)
                 SingletonMonoBehaviour<StatusManager>.Instance.UpdateStatusToNumber(StatusType.DayIndex, StreamLoader.customStreamSettings.CustomDay);
             else SingletonMonoBehaviour<StatusManager>.Instance.UpdateStatusToNumber(StatusType.DayIndex, 15);
@@ -128,7 +132,7 @@ namespace CustomStreamLoader
             }
             SingletonMonoBehaviour<EventManager>.Instance.SetShortcutState(false, 0.2f);
             SingletonMonoBehaviour<TaskbarManager>.Instance.SetTaskbarInteractive(false);
-            if (StreamLoader.customStreamSettings.IsIntroPlaying)
+            if (!StreamLoader.customStreamSettings.hasDarkInterface && StreamLoader.customStreamSettings.IsIntroPlaying)
             {
                 SingletonMonoBehaviour<EventManager>.Instance.AddEvent<Action_HaishinStart>();
             }
@@ -137,9 +141,19 @@ namespace CustomStreamLoader
                 HaishinFirstAnimation.LoadHaishinFirstAnimation().Forget();
                 await UniTask.Delay(300);
                 SingletonMonoBehaviour<WindowManager>.Instance.CleanAll();
-                SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.Broadcast);
-                SingletonMonoBehaviour<WindowManager>.Instance.Uncloseable(AppType.Broadcast);
-                SingletonMonoBehaviour<WindowManager>.Instance.UnMovable(AppType.Broadcast);
+                if (StreamLoader.customStreamSettings.hasDarkInterface)
+                {
+                    SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.LiveDark);
+                    SingletonMonoBehaviour<WindowManager>.Instance.Uncloseable(AppType.LiveDark);
+                    SingletonMonoBehaviour<WindowManager>.Instance.UnMovable(AppType.LiveDark);
+                }
+                else
+                {
+                    SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.Broadcast);
+                    SingletonMonoBehaviour<WindowManager>.Instance.Uncloseable(AppType.Broadcast);
+                    SingletonMonoBehaviour<WindowManager>.Instance.UnMovable(AppType.Broadcast);
+                }
+
             }
             ReversePatches.endEvent_Stub(__instance);
         }
@@ -163,6 +177,29 @@ namespace CustomStreamLoader
         internal static void CloseCustomStream()
         {
             StreamLoader.hasStreamPlayed = false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Shortcut_boot), "Awake")]
+        internal static bool OpenOtherStream(Shortcut_boot __instance)
+        {
+            if (__instance.appType == AppType.ManualHaishin)
+            {
+                __instance.GetComponent<Button>().onClick.AddListener(delegate
+                {
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                    {
+                        Initializer.LoadStreamScene();
+                    }
+                    else
+                    {
+                        SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.ManualHaishin);
+                    }
+                });
+                return false;
+            }
+            return true;
+
         }
 
         [HarmonyPostfix]
@@ -194,6 +231,7 @@ namespace CustomStreamLoader
         {
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return;
+            if (StreamLoader.customStreamSettings.hasDarkInterface) return;
             var isValidBG = (int)StreamLoader.customStreamSettings.StartingBackground < 8;
             if (isValidBG && !StreamLoader.customStreamSettings.HasChair)
                 __instance._noChair.SetActive(true);

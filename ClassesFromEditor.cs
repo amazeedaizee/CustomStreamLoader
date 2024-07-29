@@ -65,7 +65,7 @@ namespace CustomStreamLoader
         public bool HasCustomEndScreen;
         public string CustomEndScreenPath;
 
-        public bool HasChair;
+        public bool HasChair = true;
 
         public bool IsInvertedColors;
         public bool isBordersOff;
@@ -73,6 +73,8 @@ namespace CustomStreamLoader
         public bool hasEndScreen = true;
 
         public List<PlayingObject> PlayingList = new();
+
+        public bool hasDarkInterface = false;
 
         public StreamSettings() { }
     }
