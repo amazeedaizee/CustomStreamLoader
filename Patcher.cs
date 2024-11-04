@@ -317,7 +317,7 @@ namespace CustomStreamLoader
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Live), "UpdateDetail")]
-        static bool NoWatching(Live __instance, ref TMP_Text ___haisinDetail, LanguageType ____lang)
+        static bool NoWatching(Live __instance, ref TMP_Text ___haisinDetail)
         {
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return true;
@@ -327,7 +327,7 @@ namespace CustomStreamLoader
             if (watchingNum < 192)
             {
                 ___haisinDetail.text = string.Concat(new string[]
-                         { watchingNum.ToString(), " ", NgoEx.SystemTextFromType(SystemTextType.Haisin_Watching_Number, ____lang), " ・ ", NgoEx.SystemTextFromType(SystemTextType.Haisin_Started_Day, ____lang), " ",NgoEx.DayText(SingletonMonoBehaviour<StatusManager>.Instance.GetStatus(StatusType.DayIndex), ____lang) });
+                         { watchingNum.ToString(), " ", NgoEx.SystemTextFromType(SystemTextType.Haisin_Watching_Number, __instance._lang), " ・ ", NgoEx.SystemTextFromType(SystemTextType.Haisin_Started_Day, __instance._lang), " ",NgoEx.DayText(SingletonMonoBehaviour<StatusManager>.Instance.GetStatus(StatusType.DayIndex), __instance._lang) });
                 __instance.slider.value = 1f - __instance.NowPlaying.playing.Count / __instance.scenarioLength;
                 return false;
             }
