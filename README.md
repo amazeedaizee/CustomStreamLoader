@@ -1,3 +1,4 @@
+### [A small update on my mods](https://gist.github.com/amazeedaizee/b065103e312e6339ddce15854445dc27)
 # Custom Stream Loader for Needy Streamer Overload
 
 ![2023-08-21](https://github.com/amazeedaizee/CustomStreamLoader/assets/131136866/6b828ae9-0091-4f26-9125-df5e89ad03ef)
@@ -7,6 +8,14 @@ A mod that can play your Custom Streams made through the [Custom Stream Maker](h
 
 ### Note: You must have BepInEx pre-configured and enabled with the game to use this mod.
 [You can read how to configure BepInEx with the game here.](https://gist.github.com/amazeedaizee/ae0dd70cc0d842d6a83cd80451e3752e)
+
+-----
+
+## Disclosure
+
+This mod was unfortunately created using Visual Studio 2022 with Intellicode (Ai-powered autocomplete)
+
+[More info](https://gist.github.com/amazeedaizee/b065103e312e6339ddce15854445dc27)
 
 -----
 
