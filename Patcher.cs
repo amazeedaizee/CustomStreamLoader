@@ -396,6 +396,33 @@ namespace CustomStreamLoader
 
                 return false;
             }
+            if (haisinPoint.StartsWith("eff_"))
+            {
+                if (haisinPoint.EndsWith("end_calm"))
+                {
+                    PostEffectManager.Instance.ResetShaderCalmly();
+                    return false;
+                }
+                if (haisinPoint.EndsWith("end"))
+                {
+                    PostEffectManager.Instance.ResetShader();
+                    return false;
+                }
+                var args = haisinPoint.Split(['_']);
+                bool result1 = Enum.TryParse(args[1], out EffectType eff);
+                bool result2 = float.TryParse(args[2], out float weight);
+                if (!result1 || !result2) return false;
+                PostEffectManager.Instance.SetShader(eff);
+                if (args.Length == 4 && haisinPoint.EndsWith("calm"))
+                {
+                    float start = 0f;
+                    DOTween.To(() => start, (float x) =>
+                    {
+                        PostEffectManager.Instance.SetShaderWeight(x);
+                    }, 1f, weight).SetEase(Ease.InExpo).Play();
+                }
+                else PostEffectManager.Instance.SetShaderWeight(weight);
+            }
             return true;
         }
 
