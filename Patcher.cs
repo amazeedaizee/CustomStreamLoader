@@ -460,7 +460,7 @@ namespace CustomStreamLoader
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PoketterCell2D), "FetchTweetImage")]
-        static bool FetchCustomTweetPic(PoketterCell2D __instance, ref bool __result)
+        static bool FetchCustomTweetPic(PoketterCell2D __instance)
         {
             var set = StreamLoader.customStreamSettings;
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
@@ -480,14 +480,14 @@ namespace CustomStreamLoader
             Sprite sprite = Sprite.Create(tex, new Rect(__instance._imageRectTr.pivot.x, __instance._imageRectTr.pivot.y, tex.width, tex.height), __instance._imageRectTr.pivot);
             __instance._image.sprite = sprite;
             __instance._imageFileName = set.aPic;
-            __result = true;
+            __instance._imageExist = true;
             return false;
 
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(TweetFetcher), nameof(TweetFetcher.ConvertTypeToTweet))]
-        static TweetMaster.Param GetCustomTweet(ref TweetMaster.Param __result, TweetType t)
+        static TweetMaster.Param GetCustomTweet(TweetMaster.Param __result, TweetType t)
         {
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return __result;
@@ -495,7 +495,7 @@ namespace CustomStreamLoader
             {
                 var set = StreamLoader.customStreamSettings;
                 if (set.hasATweet || set.hasKTweet && !(string.IsNullOrEmpty(set.kPic) && string.IsNullOrEmpty(set.aPic))) {
-                    return new()
+                    return new TweetMaster.Param
                     {
                         Id = "CUSTOM",
 
