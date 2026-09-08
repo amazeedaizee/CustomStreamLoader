@@ -410,7 +410,7 @@ namespace CustomStreamLoader
                 }
                 var args = haisinPoint.Split(['_']);
                 bool result1 = Enum.TryParse(args[1], out EffectType eff);
-                bool result2 = float.TryParse(args[2], out float weight);
+                bool result2 = float.TryParse(args[2],System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float weight);
                 if (!result1 || !result2) return false;
                 PostEffectManager.Instance.SetShader(eff);
                 if (args.Length == 4 && haisinPoint.EndsWith("calm"))
