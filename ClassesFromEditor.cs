@@ -2,6 +2,7 @@
 using ngov3;
 using System;
 using System.Collections.Generic;
+using TMPro;
 
 namespace CustomStreamLoader
 {
@@ -76,6 +77,16 @@ namespace CustomStreamLoader
 
         public bool hasDarkInterface = false;
 
+        // tweet stuff
+
+        public bool hasKTweet = false;
+        public bool hasATweet = false;
+        public string kTweet = "";
+        public string kPic = "";
+        public string aPic = "";
+        public string aTweet = "";
+
+        public List<string> tweetReps = null;
         public StreamSettings() { }
     }
     public enum PlayingType
