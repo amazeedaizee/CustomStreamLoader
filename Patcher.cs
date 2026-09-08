@@ -456,5 +456,102 @@ namespace CustomStreamLoader
             }
             catch { __instance._view.sprite = __instance._endView; }
         }
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PoketterCell2D), "FetchTweetImage")]
+        static bool FetchCustomTweetPic(PoketterCell2D __instance, ref bool __result)
+        {
+            var set = StreamLoader.customStreamSettings;
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return true;
+            byte[] data = [];
+            if (__instance.tweetDrawable.ImageId == set.aPic)
+            {
+                data = File.ReadAllBytes(set.aPic);            
+            }
+            else if (__instance.tweetDrawable.ImageId == set.kPic)
+            {
+                data = File.ReadAllBytes(set.kPic);
+            }
+            else return true;
+            Texture2D tex = new Texture2D(2, 2);
+            ImageConversion.LoadImage(tex, data);
+            Sprite sprite = Sprite.Create(tex, new Rect(__instance._imageRectTr.pivot.x, __instance._imageRectTr.pivot.y, tex.width, tex.height), __instance._imageRectTr.pivot);
+            __instance._image.sprite = sprite;
+            __instance._imageFileName = set.aPic;
+            __result = true;
+            return false;
+
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(TweetFetcher), nameof(TweetFetcher.ConvertTypeToTweet))]
+        static TweetMaster.Param GetCustomTweet(ref TweetMaster.Param __result, TweetType t)
+        {
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return __result;
+            if (t == (TweetType)10000)
+            {
+                var set = StreamLoader.customStreamSettings;
+                if (set.hasATweet || set.hasKTweet && !(string.IsNullOrEmpty(set.kPic) && string.IsNullOrEmpty(set.aPic))) {
+                    return new()
+                    {
+                        Id = "CUSTOM",
+
+                        OmoteBodyJp = set.kTweet,
+
+                        OmoteBodyEn = set.kTweet,
+
+                        OmoteBodyCn = set.kTweet,
+
+                        OtomeBodyKo = set.kTweet,
+
+                        OmoteBodyTw = set.kTweet,
+
+                        OmoteBodyVn = set.kTweet,
+
+                        OmoteBodyFr = set.kTweet,
+
+                        OmoteBodyIt = set.kTweet,
+
+                        OmoteBodyGe = set.kTweet,
+
+                        OmoteBodySp = set.kTweet,
+
+                        OmoteBodyRu = set.kTweet,
+
+                        OmoteImageId = set.kPic,
+
+                        UraBodyJp = set.aTweet,
+
+                        UraBodyEn = set.aTweet,
+
+                        UraBodyCn = set.aTweet,
+
+                        UraBodyKo = set.aTweet,
+
+                        UraBodyTw = set.aTweet,
+
+                        UraBodyVn = set.aTweet,
+
+                        UraBodyFr = set.aTweet,
+
+                        UraBodyIt = set.aTweet,
+
+                        UraBodyGe = set.aTweet,
+
+                        UraBodySp = set.aTweet,
+
+                        UraBodyRu = set.aTweet,
+
+                        UraImageId = set.aPic
+
+
+                    };
+                }
+            }
+            return __result;
+        }
     }
 }

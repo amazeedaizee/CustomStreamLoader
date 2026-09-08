@@ -71,8 +71,16 @@ namespace CustomStreamLoader
             CrashReportHandler.enableCaptureExceptions = true;
             if (set.hasATweet || set.hasKTweet)
             {
-                SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.kTweet, true, null, set.tweetReps);
-                SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.aTweet, false);
+                if (!(string.IsNullOrEmpty(set.kPic) && string.IsNullOrEmpty(set.aPic)))
+                {
+                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps( (TweetType)10000, null, set.tweetReps);
+                }
+                else
+                {
+                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.kTweet, true, null, set.tweetReps);
+                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.aTweet, false);
+                }
+
                 await NgoEvent.DelaySkippable(10000);
             }
             var window = SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.RebootDialog);
