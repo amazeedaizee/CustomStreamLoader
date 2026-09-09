@@ -58,6 +58,7 @@ namespace CustomStreamLoader
 
 
                 List<string> list = set.tweetReps.Trim().Split('\n').ToList();
+                list.Reverse();
                 SingletonMonoBehaviour<PoketterManager>.Instance.KUSOREPPROBABILITY = 0;
                 if ((!string.IsNullOrWhiteSpace(set.kPic) && File.Exists(set.kPic)) || (!string.IsNullOrWhiteSpace(set.aPic) && File.Exists(set.aPic)))
                 {
