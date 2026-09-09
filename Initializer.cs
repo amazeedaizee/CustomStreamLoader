@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Logging;
 using Cysharp.Threading.Tasks;
 using HarmonyLib;
 using ngov3;
@@ -16,10 +17,12 @@ namespace CustomStreamLoader
         public const string pluginVersion = "2.0.0.0";
 
         public static PluginInfo PInfo { get; private set; }
-
+        
+        public static ManualLogSource logger { get; private set; }
         public void Awake()
         {
             PInfo = Info;
+            logger = Logger;
             Logger.LogInfo("A plugin to load in custom streams. Press the Home key on the Login/Caution screen to begin.");
             Harmony harmony = new Harmony(pluginGuid);
             var originalSetScenario = AccessTools.FirstMethod(typeof(Live), m => m.Name == "SetScenario");

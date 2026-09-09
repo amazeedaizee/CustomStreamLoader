@@ -156,7 +156,6 @@ namespace CustomStreamLoader
                         SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(d1, 1);
                     if (SingletonMonoBehaviour<PoketterManager>.Instance.isValidTweetData(d2))
                         SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(d2, 1);
-                    Debug.Log(i);
                 }
 
             }
@@ -286,7 +285,7 @@ namespace CustomStreamLoader
             }
             if (watchingNum > 10000000)
             {
-                Debug.LogError("Watching number can't be higher than 10 million. Setting number to ten million.");
+                Initializer.logger.LogError("Watching number can't be higher than 10 million. Setting number to ten million.");
                 ___watcher = 10000000;
                 __instance.UpdateDetail();
                 return;
@@ -503,15 +502,13 @@ namespace CustomStreamLoader
             try
             {
                 var spt = MediaExporter.LoadImageFromFile(__instance.tweetDrawable.ImageId);
-                Debug.Log(__instance._image.sprite.rect);
-                Debug.Log(spt.rect);
                 __instance._image.sprite = spt;
                 __instance._imageFileName = __instance.tweetDrawable.ImageId;
                 return false;
             }
             catch(Exception ex) {
 
-                Debug.LogError(ex);
+                Initializer.logger.LogError(ex);
                 return true; 
             }
 

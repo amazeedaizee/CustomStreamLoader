@@ -47,7 +47,7 @@ namespace CustomStreamLoader
             {
                 AsyncOperationHandle<IResourceLocator> handle = Addressables.LoadContentCatalogAsync(path, true);
                 await UniTask.WaitUntil(() => handle.IsDone);
-                Debug.Log("Catalog loaded.");
+                Initializer.logger.LogInfo("Catalog loaded.");
             }
             catch { }
         }
