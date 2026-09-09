@@ -131,8 +131,35 @@ namespace CustomStreamLoader
                 else SingletonMonoBehaviour<StatusManager>.Instance.UpdateStatusToNumber(StatusType.Follower, 10000);
                 await UniTask.Delay(2700);
             }
-            SingletonMonoBehaviour<EventManager>.Instance.SetShortcutState(false, 0.2f);
+
+                SingletonMonoBehaviour<EventManager>.Instance.SetShortcutState(false, 0.2f);
             SingletonMonoBehaviour<TaskbarManager>.Instance.SetTaskbarInteractive(false);
+            if (StreamLoader.customStreamSettings.hasATweet || StreamLoader.customStreamSettings.hasKTweet && !(string.IsNullOrWhiteSpace(StreamLoader.customStreamSettings.kTweet) && string.IsNullOrWhiteSpace(StreamLoader.customStreamSettings.aTweet)))
+            {
+
+                foreach (var cell in SingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells)
+                {
+                    UnityEngine.Object.Destroy(cell.gameObject);
+
+                }
+                SingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells.Clear();
+                var day = StreamLoader.customStreamSettings.HasCustomDay ? StreamLoader.customStreamSettings.CustomDay : 15;
+                SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(new TweetData(TweetType.Day0_Poketter_001, true, 1000, 1, CmdType.None), 1);
+                SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(new TweetData(TweetType.Day0_Poketter_001, false, 1000, 1, CmdType.None), 1);
+                for (var i = 2; i < day; i++)
+                {
+                    var followers = StreamLoader.customStreamSettings.HasCustomFollowerCount ? StreamLoader.customStreamSettings.CustomFollowerCount / day : 15000 / day;
+                    var id = UnityEngine.Random.Range(0, 197);
+                    var d1 = new TweetData((TweetType)id, true, followers*i, i);
+                    var d2 = new TweetData((TweetType)id, false, followers * i, i);
+                    if (SingletonMonoBehaviour<PoketterManager>.Instance.isValidTweetData(d1))
+                        SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(d1, 1);
+                    if (SingletonMonoBehaviour<PoketterManager>.Instance.isValidTweetData(d2))
+                        SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(d2, 1);
+                    Debug.Log(i);
+                }
+
+            }
             if (!StreamLoader.customStreamSettings.hasDarkInterface && StreamLoader.customStreamSettings.IsIntroPlaying)
             {
                 if (StreamLoader.customStreamSettings.StartingEffect != EffectType.Kenjo)
@@ -372,7 +399,7 @@ namespace CustomStreamLoader
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Live), "AddMob")]
-        static bool AutoDeleteComments(string haisinPoint, List<LiveComment> ____selectableComments)
+        static bool ExSettingsComments(string haisinPoint, List<LiveComment> ____selectableComments)
         {
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return true;
@@ -470,9 +497,9 @@ namespace CustomStreamLoader
         static bool FetchCustomTweetPic(ref PoketterCell2D __instance)
         {
             var set = StreamLoader.customStreamSettings;
-            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5 || __instance.tweetDrawable.cmdType != CmdType.None)
                 return true;
-            if (__instance.tweetDrawable.ImageId == "N/A") return true;
+            if (!(__instance.tweetDrawable.ImageId == set.aPic || __instance.tweetDrawable.ImageId == set.kPic)) return true;
             try
             {
                 var spt = MediaExporter.LoadImageFromFile(__instance.tweetDrawable.ImageId);
@@ -492,24 +519,45 @@ namespace CustomStreamLoader
 
         }
 
-     
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Settings), nameof(Settings.addImage))]
+        static bool DontSaveImgInCustom()
+        {
+            return (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5);
+        }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PoketterCell2D), "SetLayout")]
         static void SetPicSize(ref PoketterCell2D __instance, ref bool imageExist)
         {
           
-            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5 || __instance.tweetDrawable.ImageId == "N/A" || string.IsNullOrWhiteSpace(__instance._imageFileName))
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5 || __instance.tweetDrawable.cmdType != CmdType.None || __instance.tweetDrawable.ImageId == "N/A" || string.IsNullOrWhiteSpace(__instance._imageFileName))
                 return;
+            var set = StreamLoader.customStreamSettings;
+            if (!(__instance._imageFileName == set.aPic || __instance._imageFileName == set.kPic)) return;
             __instance._imageExist = true;
             imageExist = true;
             __instance._image.gameObject.SetActive(true);
          
-
-
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PoketterCell2D), nameof(PoketterCell2D.SetData))]
+        static void RemoveDateReason(ref TweetDrawable nakami)
+        {
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return;
+            nakami.cmdType = CmdType.None;
+        }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PoketterCell2D), nameof(PoketterCell2D.OnDestroy))]
+        static bool KeepCache()
+        {
+            return (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5);
+             
+        }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(KusoRepView2D), nameof(KusoRepView2D.SetData))]
         static void RemoveUserId(ref KusoRepDrawable content)
@@ -517,6 +565,14 @@ namespace CustomStreamLoader
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return;
             content.UserId = "";
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PoketterCell2D), nameof(PoketterCell2D.Animate))]
+        static void SetLayoutAgain(PoketterCell2D __instance) // why do I have to do this????
+        {
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return;
+            __instance.SetLayout(__instance._imageExist);
         }
 
         [HarmonyPostfix]
