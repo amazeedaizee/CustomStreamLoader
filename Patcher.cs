@@ -148,7 +148,7 @@ namespace CustomStreamLoader
                 SingletonMonoBehaviour<PoketterView2D>.Instance.MakeTweet(new TweetData(TweetType.Day0_Poketter_001, false, 1000, 1, CmdType.None), 1);
                 for (var i = 2; i < day; i++)
                 {
-                    var followers = StreamLoader.customStreamSettings.HasCustomFollowerCount ? StreamLoader.customStreamSettings.CustomFollowerCount / day : 15000 / day;
+                    var followers = StreamLoader.customStreamSettings.HasCustomFollowerCount ? StreamLoader.customStreamSettings.CustomFollowerCount / day : 10000 / day;
                     var id = UnityEngine.Random.Range(0, 197);
                     var d1 = new TweetData((TweetType)id, true, followers*i, i);
                     var d2 = new TweetData((TweetType)id, false, followers * i, i);
