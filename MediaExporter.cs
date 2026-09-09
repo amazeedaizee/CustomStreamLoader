@@ -22,7 +22,6 @@ namespace CustomStreamLoader
         {
             string fileName = Path.GetFileName(path);
             byte[] file = File.ReadAllBytes(path);
-
             Texture2D tex = new Texture2D(2, 2);
             ImageConversion.LoadImage(tex, file, false);
             tex.filterMode = FilterMode.Point;

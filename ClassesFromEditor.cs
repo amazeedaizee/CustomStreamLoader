@@ -86,7 +86,7 @@ namespace CustomStreamLoader
         public string aPic = "";
         public string aTweet = "";
 
-        public List<string> tweetReps = null;
+        public string tweetReps = null;
         public StreamSettings() { }
     }
     public enum PlayingType

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using DG.Tweening.Plugins.Core.PathCore;
 using HarmonyLib;
 using NGO;
 using ngov3;
@@ -134,6 +135,11 @@ namespace CustomStreamLoader
             SingletonMonoBehaviour<TaskbarManager>.Instance.SetTaskbarInteractive(false);
             if (!StreamLoader.customStreamSettings.hasDarkInterface && StreamLoader.customStreamSettings.IsIntroPlaying)
             {
+                if (StreamLoader.customStreamSettings.StartingEffect != EffectType.Kenjo)
+                {
+                    PostEffectManager.Instance.SetShader(StreamLoader.customStreamSettings.StartingEffect);
+                    PostEffectManager.Instance.SetShaderWeight(StreamLoader.customStreamSettings.EffectIntensity);
+                }
                 SingletonMonoBehaviour<EventManager>.Instance.AddEvent<Action_HaishinStart>();
             }
             else
@@ -411,7 +417,7 @@ namespace CustomStreamLoader
                 var args = haisinPoint.Split(['_']);
                 bool result1 = Enum.TryParse(args[1], out EffectType eff);
                 bool result2 = float.TryParse(args[2],System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float weight);
-                if (!result1 || !result2) return false;
+                if (!result1 || !result2) return true;
                 PostEffectManager.Instance.SetShader(eff);
                 if (args.Length == 4 && haisinPoint.EndsWith("calm"))
                 {
@@ -419,9 +425,10 @@ namespace CustomStreamLoader
                     DOTween.To(() => start, (float x) =>
                     {
                         PostEffectManager.Instance.SetShaderWeight(x);
-                    }, 1f, weight).SetEase(Ease.InExpo).Play();
+                    }, start, weight).SetEase(Ease.InExpo).Play();
                 }
                 else PostEffectManager.Instance.SetShaderWeight(weight);
+                return false;
             }
             return true;
         }
@@ -460,29 +467,56 @@ namespace CustomStreamLoader
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PoketterCell2D), "FetchTweetImage")]
-        static bool FetchCustomTweetPic(PoketterCell2D __instance)
+        static bool FetchCustomTweetPic(ref PoketterCell2D __instance)
         {
             var set = StreamLoader.customStreamSettings;
             if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
                 return true;
-            byte[] data = [];
-            if (__instance.tweetDrawable.ImageId == set.aPic)
+            if (__instance.tweetDrawable.ImageId == "N/A") return true;
+            try
             {
-                data = File.ReadAllBytes(set.aPic);            
+                var spt = MediaExporter.LoadImageFromFile(__instance.tweetDrawable.ImageId);
+                Debug.Log(__instance._image.sprite.rect);
+                Debug.Log(spt.rect);
+                __instance._image.sprite = spt;
+                __instance._imageFileName = __instance.tweetDrawable.ImageId;
+                return false;
             }
-            else if (__instance.tweetDrawable.ImageId == set.kPic)
-            {
-                data = File.ReadAllBytes(set.kPic);
-            }
-            else return true;
-            Texture2D tex = new Texture2D(2, 2);
-            ImageConversion.LoadImage(tex, data);
-            Sprite sprite = Sprite.Create(tex, new Rect(__instance._imageRectTr.pivot.x, __instance._imageRectTr.pivot.y, tex.width, tex.height), __instance._imageRectTr.pivot);
-            __instance._image.sprite = sprite;
-            __instance._imageFileName = set.aPic;
-            __instance._imageExist = true;
-            return false;
+            catch(Exception ex) {
 
+                Debug.LogError(ex);
+                return true; 
+            }
+
+
+
+        }
+
+     
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PoketterCell2D), "SetLayout")]
+        static void SetPicSize(ref PoketterCell2D __instance, ref bool imageExist)
+        {
+          
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5 || __instance.tweetDrawable.ImageId == "N/A" || string.IsNullOrWhiteSpace(__instance._imageFileName))
+                return;
+            __instance._imageExist = true;
+            imageExist = true;
+            __instance._image.gameObject.SetActive(true);
+         
+
+
+        }
+
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(KusoRepView2D), nameof(KusoRepView2D.SetData))]
+        static void RemoveUserId(ref KusoRepDrawable content)
+        {
+            if (SingletonMonoBehaviour<Settings>.Instance.saveNumber != 5)
+                return;
+            content.UserId = "";
         }
 
         [HarmonyPostfix]

@@ -2,10 +2,14 @@
 using NGO;
 using ngov3;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.CrashReportHandler;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace CustomStreamLoader
 {
@@ -17,27 +21,7 @@ namespace CustomStreamLoader
             base.Awake();
             title = set.StringTitle;
             playing.AddRange(StreamLoader.customPlayingList);
-            if (set.hasATweet || set.hasKTweet)
-            {
-                var day = SingletonMonoBehaviour<StatusManager>.Instance.GetStatus(StatusType.DayIndex);
-                for (var i = 0; i < day; i++)
-                {
-                    const int COMMAND_LEN = 53;
-                    HashSet<int> hashSet = new HashSet<int>();
-                    int num;
-                    do
-                    {
-                        num = UnityEngine.Random.Range(0, COMMAND_LEN);
-                        if (!hashSet.Contains(num))
-                        {
-                            hashSet.Add(num);
-                            var twt = TweetFetcher.CommandTweet((CommandType)num, CommandResult.success);
-                            SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(twt);
-                        }
-                    } while (hashSet.Contains(num));
-                }
-                SingletonMonoBehaviour<PoketterManager>.Instance.AddHistoryFromQueueAll();
-            }
+
         }
 
         public override async UniTask StartScenario()
@@ -69,19 +53,53 @@ namespace CustomStreamLoader
             GameObject.Find("InvertVolume").GetComponent<Volume>().enabled = false;
             SingletonMonoBehaviour<EventManager>.Instance.ObiActive(true);
             CrashReportHandler.enableCaptureExceptions = true;
-            if (set.hasATweet || set.hasKTweet)
+            if (set.hasATweet || set.hasKTweet && !(string.IsNullOrWhiteSpace(set.kTweet) && string.IsNullOrWhiteSpace(set.aTweet)))
             {
-                if (!(string.IsNullOrEmpty(set.kPic) && string.IsNullOrEmpty(set.aPic)))
+                SingletonMonoBehaviour<PoketterManager>.Instance.history.Clear();
+                SingletonMonoBehaviour<PoketterManager>.Instance._tweetQueue.Clear();
+                Debug.Log(SingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells.Count);
+                foreach (var cell in SingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells)
                 {
-                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps( (TweetType)10000, null, set.tweetReps);
+                    Destroy(cell.gameObject);
+                  
+                }
+                SingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells.Clear();
+                SingletonMonoBehaviour<PoketterManager>.Instance.AddHistory(new TweetData(TweetType.AfterTweet_Zatudan1, true, 1000, 1, CmdType.Zatudan_1));
+                SingletonMonoBehaviour<PoketterManager>.Instance.AddHistory(new TweetData(TweetType.AfterTweet_Zatudan1, false, 1000, 1, CmdType.Zatudan_1));
+                //var day = SingletonMonoBehaviour<StatusManager>.Instance.GetStatus(StatusType.DayIndex);
+                //for (var i = 0; i < day; i++)
+                //{
+                //    const int COMMAND_LEN = 53;
+                //    HashSet<int> hashSet = new HashSet<int>();
+                //    int num;
+                //    doSingletonMonoBehaviour<PoketterView2D>.Instance._tweetCells
+                //    {
+                //        num = UnityEngine.Random.Range(0, COMMAND_LEN);
+                //        if (!hashSet.Contains(num))
+                //        {
+                //            hashSet.Add(num);
+                //            var twt = TweetFetcher.CommandTweet((CommandType)num, CommandResult.success);
+                //            SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(twt);
+                //        }
+                //    } while (hashSet.Contains(num));
+                //}
+
+                List<string> list = set.tweetReps.Trim().Split('\n').ToList();
+               
+                if ((!string.IsNullOrWhiteSpace(set.kPic) && File.Exists(set.kPic)) || (!string.IsNullOrWhiteSpace(set.aPic) && File.Exists(set.aPic)))
+                {
+                 
+                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps( (TweetType)10000, null, list);
                 }
                 else
                 {
-                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.kTweet, true, null, set.tweetReps);
-                    SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.aTweet, false);
+                    if (!(string.IsNullOrWhiteSpace(set.kTweet)))
+                        SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.kTweet, true, null, list);
+                    if (!(string.IsNullOrWhiteSpace(set.aTweet)))
+                        SingletonMonoBehaviour<PoketterManager>.Instance.AddQueueWithKusoreps(set.aTweet, false);
                 }
-
-                await NgoEvent.DelaySkippable(10000);
+                SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.Result);
+                await NgoEvent.DelaySkippable(25000);
             }
             var window = SingletonMonoBehaviour<WindowManager>.Instance.NewWindow(AppType.RebootDialog);
             window.Uncloseable();

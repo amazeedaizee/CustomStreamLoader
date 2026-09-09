@@ -90,6 +90,9 @@ namespace CustomStreamLoader
                 case PlayingType.PlayEffect:
                     customPlayingList.Add(ConvertToChanceEffect(obj as PlayEffect));
                     break;
+                case PlayingType.PlayVisEffect:
+                    customPlayingList.Add(ConvertToVisualEffect(obj as PlayVisEffect));
+                    break;
                 default:
                     customPlayingList.Add(ConvertToOtherPlayingObj(obj as ChatGeneral));
                     break;
@@ -167,6 +170,23 @@ namespace CustomStreamLoader
                     break;
             }
             return new Playing(effect.BorderEffect, effectTransition);
+        }
+
+        internal static Playing ConvertToVisualEffect(PlayVisEffect visual)
+        {
+            string eff = "eff_";
+            if (visual.Effect == EffectType.Kenjo)
+            {
+                eff += "end";
+            }
+            else
+            {
+                eff += visual.Effect.ToString();
+                eff += $"_{visual.Weight}";
+                    
+            }
+            if (visual.IsCalm) eff += "_calm";
+            return new Playing(eff);
         }
 
         internal static Playing ConvertToOtherPlayingObj(ChatGeneral general)
