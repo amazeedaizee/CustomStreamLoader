@@ -13,7 +13,7 @@ namespace CustomStreamLoader
     {
         public const string pluginGuid = "needy.girl.customstream";
         public const string pluginName = "Custom Stream Loader";
-        public const string pluginVersion = "1.0.0.1";
+        public const string pluginVersion = "2.0.0.0";
 
         public static PluginInfo PInfo { get; private set; }
 
